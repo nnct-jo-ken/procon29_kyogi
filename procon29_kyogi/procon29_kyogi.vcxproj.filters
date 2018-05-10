@@ -17,14 +17,4 @@
   <ItemGroup>
     <None Include="README.md" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="rand_board.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="rand_board.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-  </ItemGroup>
 </Project>
