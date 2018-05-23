@@ -1,7 +1,7 @@
-#include <iostream>
-#include <queue>
 #include "GameServer.h"
 
+// サーバーオブジェクトの初期設定
+// 引数にNULLを渡すと、適当な値が使用される
 void GameServer::init(int row_, int column_, int turn_) {
 	row = (row_ == NULL) ? 10 : row_;
 	row = (column_ == NULL) ? 10 : column_;
@@ -13,18 +13,25 @@ void GameServer::init(int row_, int column_, int turn_) {
 	}
 
 	// エージェントの初期化
-	agent[0].state = A;
-	agent[1].state = A;
-	agent[2].state = B;
-	agent[3].state = B;
+	agent[0].state = 1;
+	agent[1].state = 1;
+	agent[2].state = 2;
+	agent[3].state = 2;
+
+	agent[0].id = 0;
+	agent[1].id = 1;
+	agent[2].id = 2;
+	agent[3].id = 3;
 
 	// エージェントの初期位置のタイルの設定
 	for (int i = 0; i < 4; i++) {
 		field[agent[i].posx][agent[i].posy].state = agent[i].state;
-		field[agent[i].posx][agent[i].posy].point = 0;
 	}
+
+	isGame = true;
 }
 
+// ループ内でこのメソッドを呼び出し続ける
 void GameServer::server() {
 	// 全てのエージェントが行動する方向を決定したか
 	int ready = 0;
@@ -37,7 +44,7 @@ void GameServer::server() {
 	if (ready == 4) {
 		bool can_move[] = { true, true, true, true };
 
-		//エージェント同士の干渉がないかチェック ここから
+		//エージェント同士の干渉がないかチェック
 		for (int i = 0; i < 3; i++) {
 			if (agent[0].next_posx == agent[1].next_posx && agent[0].next_posy == agent[1].next_posy) {
 				can_move[0] = false; can_move[1] = false;
@@ -68,14 +75,14 @@ void GameServer::server() {
 
 		// タイル除去
 		for (int i = 0; i < 4; i++) {
-			State s = field[agent[i].next_posx][agent[i].next_posy].state;
-			if (s != NEUTRAL && s != agent[i].state) {
-				field[agent[i].next_posx][agent[i].next_posy].state = NEUTRAL;
+			int _state = field[agent[i].next_posx][agent[i].next_posy].state;
+			if (_state != 0 && _state != agent[i].state) {
+				field[agent[i].next_posx][agent[i].next_posy].state = 0;
 				agent[i].next_posx = agent[i].posx;
 				agent[i].next_posy = agent[i].posy;
 			}
 			if (agent[i].isRemoveTile && can_move[i]) {
-				field[agent[i].posx][agent[i].posy].state = NEUTRAL;
+				field[agent[i].posx][agent[i].posy].state = 0;
 				agent[i].next_posx = agent[i].posx;
 				agent[i].next_posy = agent[i].posy;
 			}
@@ -107,7 +114,6 @@ void GameServer::server() {
 				agent[i].next_posy = agent[i].posy;
 			}
 		}
-		//　ここまで
 
 		// エージェントの移動
 		for (int i = 0; i < 4; i++) {
@@ -122,12 +128,18 @@ void GameServer::server() {
 
 		turn--;
 	}
-	// ゲーム終了時の処理j
+	// ゲーム終了時の処理
 	if (turn == 0) {
+		isGame = false;
+		game_score team1_score = count_score(1);
+		game_score team2_score = count_score(2);
 	}
 }
 
-bool GameServer::move_agent(Step step, int agent_id, Agent agent[4], bool isRemoveTile_) {
+// エージェントの移動方向を設定する
+// 全てのエージェントがこのメソッドで移動方向を決定したら移動してターンが経過する
+// 返り値は引数で与えられた移動ができるかどうか
+bool GameServer::move_agent(int agent_id, Step step, bool isRemoveTile_) {
 	agent[agent_id].isRemoveTile = isRemoveTile_;
 	switch (step)
 	{
@@ -224,7 +236,7 @@ bool GameServer::move_agent(Step step, int agent_id, Agent agent[4], bool isRemo
 }
 
 // 得点計算
-game_score GameServer::count_score(State team) {
+game_score GameServer::count_score(int _state) {
 	bool * * is_field_end = new bool*[row];
 	for (int i = 0; i < row; i++) {
 		is_field_end[i] = new bool[column];
@@ -247,7 +259,7 @@ game_score GameServer::count_score(State team) {
 	int tile_point = 0;
 	for (int x = 0; x < row; x++) {
 		for (int y = 0; y < column; y++) {
-			if (field[x][y].state == team) {
+			if (field[x][y].state == _state) {
 				is_searched[x][y] = true;
 				tile_point += field[x][y].point;
 			}
@@ -257,7 +269,7 @@ game_score GameServer::count_score(State team) {
 	// 領域ポイントを計算
 	for (int x = 0; x < row; x++) {
 		for (int y = 0; y < column; y++) {
-			if (field[x][y].state != team && !is_field_end[x][y] && !is_searched[x][y]) {
+			if (field[x][y].state != _state && !is_field_end[x][y] && !is_searched[x][y]) {
 				bool success = true;
 				int sco = 0;
 				std::queue<int> qux;
@@ -283,28 +295,28 @@ game_score GameServer::count_score(State team) {
 					}
 
 					// x+1の場合
-					if (field[qux.front() + 1][quy.front()].state != team && !is_searched[qux.front() + 1][quy.front()]) {
+					if (field[qux.front() + 1][quy.front()].state != _state && !is_searched[qux.front() + 1][quy.front()]) {
 						qux.push(qux.front() + 1);
 						quy.push(quy.front());
 						is_searched[qux.front() + 1][quy.front()] = true;
 					}
 
 					// x-1の場合
-					if (field[qux.front() - 1][quy.front()].state != team && !is_searched[qux.front() - 1][quy.front()]) {
+					if (field[qux.front() - 1][quy.front()].state != _state && !is_searched[qux.front() - 1][quy.front()]) {
 						qux.push(qux.front() - 1);
 						quy.push(quy.front());
 						is_searched[qux.front() - 1][quy.front()] = true;
 					}
 
 					// y+1の場合
-					if (field[qux.front()][quy.front() + 1].state != team && !is_searched[qux.front()][quy.front() + 1]) {
+					if (field[qux.front()][quy.front() + 1].state != _state && !is_searched[qux.front()][quy.front() + 1]) {
 						qux.push(qux.front());
 						quy.push(quy.front() + 1);
 						is_searched[qux.front()][quy.front() + 1] = true;
 					}
 
 					// y-1の場合
-					if (field[qux.front()][quy.front() - 1].state != team && !is_searched[qux.front()][quy.front() - 1]) {
+					if (field[qux.front()][quy.front() - 1].state != _state && !is_searched[qux.front()][quy.front() - 1]) {
 						qux.push(qux.front());
 						quy.push(quy.front() - 1);
 						is_searched[qux.front()][quy.front() - 1] = true;
