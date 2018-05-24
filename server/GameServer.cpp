@@ -32,103 +32,12 @@ void GameServer::init(int row_, int column_, int turn_) {
 }
 
 // ループ内でこのメソッドを呼び出し続ける
-void GameServer::server() {
-	// 全てのエージェントが行動する方向を決定したか
-	int ready = 0;
-	for (int i = 0; i < 4; i++) {
-		if (agent[i].next_step != N_A) {
-			ready++;
-		}
-	}
-	// エージェントの移動の処理
-	if (ready == 4) {
-		bool can_move[] = { true, true, true, true };
-
-		//エージェント同士の干渉がないかチェック
-		for (int i = 0; i < 3; i++) {
-			if (agent[0].next_posx == agent[1].next_posx && agent[0].next_posy == agent[1].next_posy) {
-				can_move[0] = false; can_move[1] = false;
-			}
-			if (agent[0].next_posx == agent[2].next_posx && agent[0].next_posy == agent[2].next_posy) {
-				can_move[0] = false; can_move[2] = false;
-			}
-			if (agent[0].next_posx == agent[3].next_posx && agent[0].next_posy == agent[3].next_posy) {
-				can_move[0] = false; can_move[3] = false;
-			}
-			if (agent[1].next_posx == agent[2].next_posx && agent[1].next_posy == agent[2].next_posy) {
-				can_move[1] = false; can_move[2] = false;
-			}
-			if (agent[1].next_posx == agent[3].next_posx && agent[1].next_posy == agent[3].next_posy) {
-				can_move[1] = false; can_move[3] = false;
-			}
-			if (agent[2].next_posx == agent[3].next_posx && agent[2].next_posy == agent[3].posy) {
-				can_move[2] = false; can_move[3] = false;
-			}
-		}
-
-		for (int i = 0; i < 4; i++) {
-			if (!can_move[i]) {
-				agent[i].next_posx = agent[i].posx;
-				agent[i].next_posy = agent[i].posy;
-			}
-		}
-
-		// タイル除去
-		for (int i = 0; i < 4; i++) {
-			int _state = field[agent[i].next_posx][agent[i].next_posy].state;
-			if (_state != 0 && _state != agent[i].state) {
-				field[agent[i].next_posx][agent[i].next_posy].state = 0;
-				agent[i].next_posx = agent[i].posx;
-				agent[i].next_posy = agent[i].posy;
-			}
-			if (agent[i].isRemoveTile && can_move[i]) {
-				field[agent[i].posx][agent[i].posy].state = 0;
-				agent[i].next_posx = agent[i].posx;
-				agent[i].next_posy = agent[i].posy;
-			}
-			agent[i].isRemoveTile = false;
-		}
-
-		if (agent[0].posx == agent[1].posx && agent[0].posy == agent[1].posy) {
-			can_move[0] = false; can_move[1] = false;
-		}
-		if (agent[0].posx == agent[2].posx && agent[0].posy == agent[2].posy) {
-			can_move[0] = false; can_move[2] = false;
-		}
-		if (agent[0].posx == agent[3].posx && agent[0].posy == agent[3].posy) {
-			can_move[0] = false; can_move[3] = false;
-		}
-		if (agent[1].posx == agent[2].posx && agent[1].posy == agent[2].posy) {
-			can_move[1] = false; can_move[2] = false;
-		}
-		if (agent[1].posx == agent[3].posx && agent[1].posy == agent[3].posy) {
-			can_move[1] = false; can_move[3] = false;
-		}
-		if (agent[2].posx == agent[3].posx && agent[2].posy == agent[3].posy) {
-			can_move[2] = false; can_move[3] = false;
-		}
-
-		for (int i = 0; i < 4; i++) {
-			if (!can_move[i]) {
-				agent[i].next_posx = agent[i].posx;
-				agent[i].next_posy = agent[i].posy;
-			}
-		}
-
-		// エージェントの移動
-		for (int i = 0; i < 4; i++) {
-			agent[i].posx = agent[i].next_posx;
-			agent[i].posy = agent[i].next_posy;
-		}
-
-		// 後処理
-		for (int i = 0; i < 4; i++) {
-			agent[i].next_step = N_A;
-		}
-
-		turn--;
-	}
+// 引数にtrueを渡すことで1ターン経過する
+void GameServer::server(bool transition_turn) {
 	// ゲーム終了時の処理
+	if (transition_turn) {
+		transition();
+	}
 	if (turn == 0) {
 		isGame = false;
 		game_score team1_score = count_score(1);
@@ -136,9 +45,74 @@ void GameServer::server() {
 	}
 }
 
+// ターン移行
+// エージェントが行動する
+void GameServer::transition() {
+	// エージェントの移動の処理
+
+	for (int i = 0; i < 4; i++) {
+		if (agent[i].step == N_A) {
+			this->move_agent(i, STAY, false);
+		}
+	}
+
+	bool can_move[] = { true, true, true, true };
+
+	//エージェント同士の干渉がないかチェック
+	for (int i = 0; i < 3; i++) {
+		interference_agent(can_move);
+	}
+
+	for (int i = 0; i < 4; i++) {
+		if (!can_move[i]) {
+			agent[i].next_posx = agent[i].posx;
+			agent[i].next_posy = agent[i].posy;
+		}
+	}
+
+	// タイル除去
+	for (int i = 0; i < 4; i++) {
+		int _state = field[agent[i].next_posx][agent[i].next_posy].state;
+		if (_state != 0 && _state != agent[i].state) {
+			field[agent[i].next_posx][agent[i].next_posy].state = 0;
+			agent[i].next_posx = agent[i].posx;
+			agent[i].next_posy = agent[i].posy;
+		}
+		if (agent[i].isRemoveTile && can_move[i]) {
+			field[agent[i].posx][agent[i].posy].state = 0;
+			agent[i].next_posx = agent[i].posx;
+			agent[i].next_posy = agent[i].posy;
+		}
+		agent[i].isRemoveTile = false;
+	}
+
+	// 再びエージェント同士の干渉をチェック
+	interference_agent(can_move);
+
+	for (int i = 0; i < 4; i++) {
+		if (!can_move[i]) {
+			agent[i].next_posx = agent[i].posx;
+			agent[i].next_posy = agent[i].posy;
+		}
+	}
+
+	// エージェントの移動
+	for (int i = 0; i < 4; i++) {
+		agent[i].posx = agent[i].next_posx;
+		agent[i].posy = agent[i].next_posy;
+	}
+
+	// 後処理
+	for (int i = 0; i < 4; i++) {
+		agent[i].next_step = N_A;
+	}
+
+	turn--;
+
+}
+
 // エージェントの移動方向を設定する
-// 全てのエージェントがこのメソッドで移動方向を決定したら移動してターンが経過する
-// 返り値は引数で与えられた移動ができるかどうか
+// 返り値は引数で与えられた方向に移動ができるかどうか
 bool GameServer::move_agent(int agent_id, Step step, bool isRemoveTile_) {
 	agent[agent_id].isRemoveTile = isRemoveTile_;
 	switch (step)
@@ -232,6 +206,28 @@ bool GameServer::move_agent(int agent_id, Step step, bool isRemoveTile_) {
 	default:
 		return false;
 		break;
+	}
+}
+
+// エージェント同士が移動先で干渉するかをチェックする、結果はcan_moveに保存される
+void GameServer::interference_agent(bool can_move[4]) {
+	if (agent[0].posx == agent[1].posx && agent[0].posy == agent[1].posy) {
+		can_move[0] = false; can_move[1] = false;
+	}
+	if (agent[0].posx == agent[2].posx && agent[0].posy == agent[2].posy) {
+		can_move[0] = false; can_move[2] = false;
+	}
+	if (agent[0].posx == agent[3].posx && agent[0].posy == agent[3].posy) {
+		can_move[0] = false; can_move[3] = false;
+	}
+	if (agent[1].posx == agent[2].posx && agent[1].posy == agent[2].posy) {
+		can_move[1] = false; can_move[2] = false;
+	}
+	if (agent[1].posx == agent[3].posx && agent[1].posy == agent[3].posy) {
+		can_move[1] = false; can_move[3] = false;
+	}
+	if (agent[2].posx == agent[3].posx && agent[2].posy == agent[3].posy) {
+		can_move[2] = false; can_move[3] = false;
 	}
 }
 

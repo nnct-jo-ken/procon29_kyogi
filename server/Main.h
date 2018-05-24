@@ -12,6 +12,7 @@ typedef struct tile {
 }Tile;
 
 typedef struct agent {
+	// 
 	int id = 7;
 	bool isRemoveTile = false;
 	int state = 0;

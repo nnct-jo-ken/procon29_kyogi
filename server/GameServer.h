@@ -4,9 +4,12 @@ class GameServer
 {
 public:
 	void init(int row_, int column_, int turn_);
-	void server();
+	void server(bool transition_turn);
 	bool move_agent(int agent_id, Step step, bool isRemoveTile_);
+	void transition();
+	void interference_agent(bool can_move[4]);
 	game_score count_score(int _state);
+
 	// ƒQ[ƒ€’†‚©
 	bool isGame = true;
 private:
