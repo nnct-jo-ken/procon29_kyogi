@@ -1,5 +1,5 @@
 #pragma once
-#include "Main.h"
+#include "Procon29Game.h"
 class GameServer
 {
 public:
