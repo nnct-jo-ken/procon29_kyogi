@@ -32,16 +32,23 @@ void GameServer::init(int row_, int column_, int turn_) {
 }
 
 // ループ内でこのメソッドを呼び出し続ける
-// 引数にtrueを渡すことで1ターン経過する
-void GameServer::server(bool transition_turn) {
-	// ゲーム終了時の処理
-	if (transition_turn) {
+// 引数にtrueを渡すか、すべてのエージェントが行動を決定すると1ターン経過する
+void GameServer::server(bool transition_turn = false) {
+	if (transition_turn || (agent[0].state != N_A && agent[1].state != N_A && agent[2].state != N_A && agent[3].state != N_A)) {
 		transition();
 	}
+
+	// ゲーム終了時の処理
 	if (turn == 0) {
 		isGame = false;
 		game_score team1_score = count_score(1);
 		game_score team2_score = count_score(2);
+		for (int i = 0; i < row; i++) {
+			delete[] field[i];
+			field[i] = 0;
+		}
+		delete[] field;
+		field = 0;
 	}
 }
 
@@ -233,6 +240,7 @@ void GameServer::interference_agent(bool can_move[4]) {
 
 // 得点計算
 game_score GameServer::count_score(int _state) {
+	game_score result;
 	bool * * is_field_end = new bool*[row];
 	for (int i = 0; i < row; i++) {
 		is_field_end[i] = new bool[column];
@@ -252,12 +260,11 @@ game_score GameServer::count_score(int _state) {
 		}
 	}
 	// タイルポイントを計算
-	int tile_point = 0;
 	for (int x = 0; x < row; x++) {
 		for (int y = 0; y < column; y++) {
 			if (field[x][y].state == _state) {
 				is_searched[x][y] = true;
-				tile_point += field[x][y].point;
+				result.tile_point += field[x][y].point;
 			}
 		}
 	}
@@ -276,7 +283,7 @@ game_score GameServer::count_score(int _state) {
 				while (true) {
 					if (qux.empty()) {
 						if (success) {
-							//result += sco;
+							result.area_point += sco;
 						}
 						break;
 					}
@@ -321,4 +328,15 @@ game_score GameServer::count_score(int _state) {
 			}
 		}
 	}
+	for (int i = 0; i < row; i++) {
+		delete[] is_field_end[i];
+		delete[] is_searched[i];
+		is_field_end[i] = 0;
+		is_searched[i] = 0;
+	}
+	delete[] is_field_end;
+	delete[] is_searched;
+	is_field_end = 0;
+	is_searched = 0;
+	return result;
 }

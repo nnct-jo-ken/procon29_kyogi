@@ -116,11 +116,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GameServer.h" />
-    <ClInclude Include="Main.h" />
+    <ClInclude Include="Procon29Game.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServer.cpp" />
-    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
