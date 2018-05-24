@@ -32,7 +32,7 @@ int init::rand_board(struct board *board, int row, int column) {
 				}
 			}
 
-			if (status == 0 | status == 2) {	//‚’¼‚Éü‘ÎÌ
+			if (status == 0 || status == 2) {	//‚’¼‚Éü‘ÎÌ
 				if (column % 2 == 0) {	//‹ô”
 					if (j > column / 2) {
 						board[i * column + j] = board[i * column + (column - j)];
