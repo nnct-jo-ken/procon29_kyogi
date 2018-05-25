@@ -21,10 +21,12 @@
   <ItemGroup>
     <ClCompile Include="capture.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="rand_board.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="capture.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="rand_board.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
