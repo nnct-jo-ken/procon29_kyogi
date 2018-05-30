@@ -9,6 +9,7 @@ public:
 	void transition();
 	void interference_agent(bool can_move[4]);
 	game_score count_score(int _state);
+	board_info copy_board_info();
 
 	// ƒQ[ƒ€’†‚©
 	bool isGame = true;

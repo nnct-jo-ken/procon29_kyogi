@@ -24,7 +24,14 @@ typedef struct agent {
 	int posy = 0;
 }Agent;
 
-typedef struct game_score {
+struct game_score {
 	int tile_point = 0;
 	int area_point = 0;
-}team1_score, team2_score;
+};
+
+typedef struct board_info {
+	int row;
+	int column;
+	Tile * * field;
+	Agent agent[4];
+}Board_info;

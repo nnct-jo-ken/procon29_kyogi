@@ -4,7 +4,7 @@
 // 引数にNULLを渡すと、適当な値が使用される
 void GameServer::init(int row_, int column_, int turn_) {
 	row = (row_ == NULL) ? 10 : row_;
-	row = (column_ == NULL) ? 10 : column_;
+	column = (column_ == NULL) ? 10 : column_;
 	turn = (turn_ == NULL) ? 5 : turn_;
 	// タイルの生成
 	field = new Tile*[row];
@@ -41,8 +41,8 @@ void GameServer::server(bool transition_turn = false) {
 	// ゲーム終了時の処理
 	if (turn == 0) {
 		isGame = false;
-		game_score team1_score = count_score(1);
-		game_score team2_score = count_score(2);
+		struct game_score team1_score = count_score(1);
+		struct game_score team2_score = count_score(2);
 		for (int i = 0; i < row; i++) {
 			delete[] field[i];
 			field[i] = 0;
@@ -339,4 +339,25 @@ game_score GameServer::count_score(int _state) {
 	is_field_end = 0;
 	is_searched = 0;
 	return result;
+}
+
+board_info GameServer::copy_board_info() {
+	board_info b;
+	b.row = row;
+	b.column = column;
+	b.field = new Tile*[row];
+	for (int i = 0; i < row; i++) {
+		b.field[i] = new Tile[column];
+	}
+
+	for (int x = 0; x < row; x++) {
+		for (int y = 0; y < column; y++) {
+			b.field[x][y] = field[x][y];
+		}
+	}
+
+	for (int i = 0; i < 4; i++) {
+		b.agent[i] = agent[i];
+	}
+	return b;
 }
