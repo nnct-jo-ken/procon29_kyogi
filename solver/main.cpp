@@ -1,5 +1,7 @@
 #include "main.h"
 
+//test
+
 int main() {
 	struct field *field;
 	field = load("shape_info.txt");
