@@ -1,0 +1,4 @@
+solver
+====
+
+MiniMax–@‚ÅŽÀ‘•
