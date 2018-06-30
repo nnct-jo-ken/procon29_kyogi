@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <vector>
 #include <stdlib.h>
 
 #define MAX_LINESIZE 64	//1行あたりの最大文字数
@@ -12,9 +13,10 @@ struct field {
 		int x;	//横方向の位置
 		int y;	//縦方向の位置
 	}a1, a2;
-	int **board;	//盤面の状況
+	std::vector<std::vector<int>> board;	//盤面の状況
 };
 
 //ファイルからフィールド情報を取得
-struct field *load(const char filename[]);
+int load(const char filename[], struct field *field);
+void init_field(struct field *field);
 void view(struct field *field);

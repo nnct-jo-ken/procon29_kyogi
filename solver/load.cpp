@@ -1,19 +1,22 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "load.h"
 
+
 //盤面情報の読み取り
-struct field *load(const char filename[]) {
+int load(const char filename[], struct field *field) {
 	FILE *fp;
-	struct field field;
-	char line[MAX_LINESIZE] = { 0 };	//ファイルから1行ずつ格納
-	int int_line[MAX_LINESIZE] = { 0 };
+	//char line[MAX_LINESIZE] = { 0 };	//ファイルから1行ずつ格納
+	//int int_line[MAX_LINESIZE] = { 0 };
+
+	init_field(field);
 
 	fp = fopen(filename, "r");
 	if (fp == NULL) {
 		fprintf(stderr, "Can't open \"%s\"\n", filename);
-		return NULL;
+		return -1;
 	}
 
+	/*
 	for (int i = 1; fgets(line, MAX_LINESIZE, fp) != NULL; i++) {	//i行目
 		field.turn = 0;
 
@@ -47,18 +50,41 @@ struct field *load(const char filename[]) {
 			field.a2.y = int_line[1];
 		}
 	}
+	*/
+
+	fscanf(fp, "%d %d\n", &field->width, &field->height);	//盤面の大きさを代入
+	for (int i = 0; i < field->width; i++) {	//盤面データの投入
+		field->board.push_back(std::vector<int>());
+		for (int j = 0; j < field->height; j++) {
+			int point;	//マスの得点
+			fscanf(fp, "%d", &point);
+			field->board[i].push_back(point);
+		}
+	}
+	fscanf(fp, "%d %d\n", &field->a1.x, &field->a1.y);	//エージェントの位置
+	fscanf(fp, "%d %d\n", &field->a2.x, &field->a2.y);
 
 	fclose(fp);
-	return &field;
+	return 0;
+}
+
+void init_field(struct field *field) {
+	field->turn = 0;
+	field->width = 0;
+	field->height = 0;
+	field->a1.x = 0;
+	field->a1.y = 0;
+	field->a2.x = 0;
+	field->a2.y = 0;
 }
 
 void view(struct field *field)
 {
-	printf("%10s %d\n", "ターン数", field->turn);
-	printf("%10s %d\n", "縦の大きさ", field->width);
-	printf("%10s %d\n", "横の大きさ", field->height);
-	printf("%10s x:%d y:%d\n", "エージェント1", field->a1.x, field->a1.y);
-	printf("%10s x:%d y:%d\n", "エージェント2", field->a2.x, field->a2.y);
+	printf("%-15s %d\n", "ターン数", field->turn);
+	printf("%-15s %d\n", "縦の大きさ", field->width);
+	printf("%-15s %d\n", "横の大きさ", field->height);
+	printf("%-15s x:%d y:%d\n", "エージェント1", field->a1.x, field->a1.y);
+	printf("%-15s x:%d y:%d\n", "エージェント2", field->a2.x, field->a2.y);
 	printf("盤面の状況\n");
 	for (int i = 0; i < field->width; i++) {
 		for (int j = 0; j < field->height; j++) {

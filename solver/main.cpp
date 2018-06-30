@@ -3,9 +3,10 @@
 //test
 
 int main() {
-	struct field *field;
-	field = load("shape_info.txt");
-	view(field);
+	struct field field;
+
+	load("shape_info.txt", &field);
+	view(&field);
 	
 	system("pause");
 	return 0;
