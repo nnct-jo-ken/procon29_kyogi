@@ -5,10 +5,8 @@
 //盤面情報の読み取り
 int load(const char filename[], struct field *field) {
 	FILE *fp;
-	//char line[MAX_LINESIZE] = { 0 };	//ファイルから1行ずつ格納
-	//int int_line[MAX_LINESIZE] = { 0 };
 
-	init_field(field);
+	init_field(field);	//フィールド情報の初期化
 
 	fp = fopen(filename, "r");
 	if (fp == NULL) {
@@ -16,45 +14,9 @@ int load(const char filename[], struct field *field) {
 		return -1;
 	}
 
-	/*
-	for (int i = 1; fgets(line, MAX_LINESIZE, fp) != NULL; i++) {	//i行目
-		field.turn = 0;
-
-		int a = 0;	//int_line内での次の代入位置
-		for (int j = 0; j < MAX_LINESIZE; j++) {	//1行内でのj文字目
-			if (line[j] == ' ') continue;	//半角スペースはとばす
-			int_line[a] = atoi(&line[j]);	//数字に変換して代入
-			a++;
-		}
-
-		if (i == 1) {
-			field.width = int_line[0];
-			field.height = int_line[1];
-			
-			field.board = (int **)malloc(field.width * sizeof(int *));	//盤面データを格納する二次元配列を作成
-			for (int j = 0; j < field.width; j++) {
-				field.board[j] = (int *)malloc(field.height * sizeof(int));
-			}
-		}
-		else if (i <= field.width + 1) {
-			for (int j = 0; j < field.height; j++) {
-				field.board[i][j] = int_line[j];	//盤面データの代入
-			}
-		}
-		else if (i == 1 + field.width + 1) {	//エージェント1の配置情報
-			field.a1.x = int_line[0];
-			field.a1.y = int_line[1];
-		}
-		else if (i == 1 + field.width + 2) {	//エージェント2の配置情報
-			field.a2.x = int_line[0];
-			field.a2.y = int_line[1];
-		}
-	}
-	*/
-
 	fscanf(fp, "%d %d\n", &field->width, &field->height);	//盤面の大きさを代入
 	for (int i = 0; i < field->width; i++) {	//盤面データの投入
-		field->board.push_back(std::vector<int>());
+		field->board.push_back(std::vector<int>());	//board[i]にstd::vector<int>()を入れる
 		for (int j = 0; j < field->height; j++) {
 			int point;	//マスの得点
 			fscanf(fp, "%d", &point);

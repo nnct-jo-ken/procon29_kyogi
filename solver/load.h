@@ -3,8 +3,6 @@
 #include <vector>
 #include <stdlib.h>
 
-#define MAX_LINESIZE 64	//1行あたりの最大文字数
-
 struct field {
 	int turn;	//ターン数
 	int width;	//縦の大きさ
@@ -18,5 +16,7 @@ struct field {
 
 //ファイルからフィールド情報を取得
 int load(const char filename[], struct field *field);
+//フィールド情報の初期化
 void init_field(struct field *field);
+//フィールド情報の表示
 void view(struct field *field);

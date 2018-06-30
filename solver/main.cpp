@@ -3,7 +3,7 @@
 //test
 
 int main() {
-	struct field field;
+	struct field field;	//フィールド情報
 
 	load("shape_info.txt", &field);
 	view(&field);
