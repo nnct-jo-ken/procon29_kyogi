@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <random>
 #include <queue>
 
 #pragma once
@@ -12,8 +13,6 @@ typedef struct tile {
 }Tile;
 
 typedef struct agent {
-	// idÇÕ0Å`4
-	int id = 7;
 	bool isRemoveTile = false;
 	int state = 0;
 	Step step = N_A;
@@ -28,10 +27,3 @@ struct game_score {
 	int tile_point = 0;
 	int area_point = 0;
 };
-
-typedef struct board_info {
-	int row;
-	int column;
-	Tile * * field;
-	Agent agent[4];
-}Board_info;
