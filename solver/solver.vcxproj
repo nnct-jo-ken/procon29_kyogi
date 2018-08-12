@@ -120,10 +120,13 @@
   <ItemGroup>
     <ClCompile Include="load.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="search.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="define.h" />
     <ClInclude Include="load.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="search.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="shape_info.txt" />
