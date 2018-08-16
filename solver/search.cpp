@@ -1,12 +1,14 @@
 #include "search.h"
 #include <vector>
 
-struct next_move minimax(struct field & field, int depth)
+struct nextmoves minimax(struct board_template & field, int depth)
 {
+	nextmoves next = { 0,0,0,0,0,0 };
 
+	return next;
 }
 
-std::vector<int> search(struct field field)
+std::vector<int> search(struct board_template field)
 {
 	std::vector<int> values;
 	int val;
@@ -54,7 +56,7 @@ std::vector<int> search(struct field field)
 ///**** さすがに頭の悪い実装方法 ****
 ///**** 「メモ化」を参照すると良いかも ****
 ///</summary>
-int value(const struct field & field)
+int value(const struct board_template & field)
 {
 	int value = 0;
 	int tmp_num1, tmp_num2;	//ホントに一時保存用
@@ -136,7 +138,7 @@ int value(const struct field & field)
 //自陣か敵陣のどちらが囲っているのか、区別をつける
 //* 壁の存在はstateを見て、実際に囲う印をつけるのは、tmpのほう
 //* 壁は、自陣と敵陣の2通りで計算 = > 時間は大丈夫かな...？わからん。
-int inclose_check(const field & field, int x, int y, int team, std::vector<std::vector<int>> & tmp)
+int inclose_check(const struct board_template & field, int x, int y, int team, std::vector<std::vector<int>> & tmp)
 {
 	//領域を突破したら、囲えないことが確定
 	//もともとの配列で、外側を何かの数字で囲んでもいいかも

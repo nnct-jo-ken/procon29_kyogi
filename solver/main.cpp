@@ -3,10 +3,10 @@
 //test
 
 int main() {
-	struct field field;	//フィールド情報
+	field field;	//フィールド情報
 
-	load("shape_info.txt", &field);
-	view(&field);
+	field.load("shape_info.txt", field.board);
+	field.view(field.board);
 	
 	
 

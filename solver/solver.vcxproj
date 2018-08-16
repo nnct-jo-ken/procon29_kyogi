@@ -118,13 +118,12 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="load.cpp" />
+    <ClCompile Include="field.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="search.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="define.h" />
-    <ClInclude Include="load.h" />
+    <ClInclude Include="field.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="search.h" />
   </ItemGroup>
