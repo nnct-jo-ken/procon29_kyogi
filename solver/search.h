@@ -7,6 +7,12 @@ struct next_move {
 };
 
 ///<summary>
+///MiniMax法
+///</summary>
+///<params  name="depth">探索深さ</params>
+struct next_move minimax(struct field & field, int depth);
+
+///<summary>
 ///盤面を入力すると、各手の評価値を構造体配列で返す
 ///field情報をいじくり回すので、実体で受け取り
 ///</summary>

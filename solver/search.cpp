@@ -1,20 +1,43 @@
 #include "search.h"
 #include <vector>
 
+struct next_move minimax(struct field & field, int depth)
+{
+
+}
+
 std::vector<int> search(struct field field)
 {
 	std::vector<int> values;
+	int val;
 
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
-			if (field.a1.x + i < 0 || field.a1.x + i > field.width)	//領域突破した場合は、とばす
-				continue;
-			if (field.a1.y + i < 0 || field.a1.y + i > field.height)	//領域突破した場合は、とばす
-				continue;
-			field.a1.x += i;
-			field.a1.y += j;
-			field.state[field.a1.x + i][field.a1.x + j] = 1;
-			values.push_back(value(field));
+			for (int k = -1; k <= 1; k++) {
+				for (int l = -1; l <= 1; l++) {
+					val = 0;
+
+					if (field.a1.x + i < 0 || field.a1.x + i > field.width)	//領域突破した場合は、とばす
+						continue;
+					if (field.a1.y + j < 0 || field.a1.y + j > field.height)	//領域突破した場合は、とばす
+						continue;
+					field.a1.x += i;
+					field.a1.y += j;
+					field.state[field.a1.x + i][field.a1.x + j] = 1;
+					val += value(field);
+
+					if (field.a2.x + k < 0 || field.a2.x + k > field.width)	//領域突破した場合は、とばす
+						continue;
+					if (field.a2.y + l < 0 || field.a2.y + l > field.height)	//領域突破した場合は、とばす
+						continue;
+					field.a2.x += k;
+					field.a2.y += l;
+					field.state[field.a2.x + k][field.a2.x + l] = 1;
+					val += value(field);
+
+					values.push_back(val);
+				}
+			}
 		}
 	}
 
@@ -109,6 +132,10 @@ int value(const struct field & field)
 
 ///tmpは、指定された点が囲まれている場合は、他の点の状況も記録されているため、有用
 ///囲まれていない場合は、無用
+
+//自陣か敵陣のどちらが囲っているのか、区別をつける
+//* 壁の存在はstateを見て、実際に囲う印をつけるのは、tmpのほう
+//* 壁は、自陣と敵陣の2通りで計算 = > 時間は大丈夫かな...？わからん。
 int inclose_check(const field & field, int x, int y, int team, std::vector<std::vector<int>> & tmp)
 {
 	//領域を突破したら、囲えないことが確定
