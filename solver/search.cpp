@@ -4,6 +4,7 @@
 int minimax(struct board_template & field, int depth)
 {
 	int score = 0;
+	int tmp1, tmp2;	//移動先の移動前の状態の保存
 
 	if (depth == 0) return value(field);	//末端まで達したら、そのボードの評価値を返す
 
@@ -13,10 +14,44 @@ int minimax(struct board_template & field, int depth)
 
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
-				//fieldを次の手に変化させる
-				score = minimax(field, depth - 1);
-				if (score > max) max = score;
-				//fieldを元に戻す
+				for (int k = -1; k <= 1; k++) {
+					for (int l = -1; l <= 1; l++) {
+						if (field.own_a1.x + i < 0 || field.own_a1.x + i > field.width)	//領域突破した場合は、とばす
+							continue;
+						if (field.own_a1.y + j < 0 || field.own_a1.y + j > field.height)
+							continue;
+						if (field.own_a2.x + i < 0 || field.own_a2.x + i > field.width)
+							continue;
+						if (field.own_a2.y + j < 0 || field.own_a2.y + j > field.height)
+							continue;
+
+						//fieldを次の手に変化させる
+						field.own_a1.x += i;
+						field.own_a1.y += j;
+						tmp1 = field.state[field.own_a1.x + i][field.own_a1.x + j];
+						field.state[field.own_a1.x + i][field.own_a1.x + j] = 1;
+
+						field.own_a2.x += k;
+						field.own_a2.y += l;
+						tmp2 = field.state[field.own_a2.x + k][field.own_a2.x + l];
+						field.state[field.own_a2.x + k][field.own_a2.x + l] = 1;
+
+						score = minimax(field, depth - 1);
+						if (score > max) max = score;
+						//debug
+						field::view(field);
+						//debug/
+
+						//fieldを元に戻す
+						field.own_a1.x -= i;
+						field.own_a1.y -= j;
+						field.state[field.own_a1.x + i][field.own_a1.x + j] = tmp1;
+
+						field.own_a2.x -= k;
+						field.own_a2.y -= l;
+						field.state[field.own_a2.x + k][field.own_a2.x + l] = tmp2;
+					}
+				}
 			}
 		}
 		return max;
@@ -27,10 +62,44 @@ int minimax(struct board_template & field, int depth)
 
 		for (int i = 0; i <= 1; i++) {
 			for (int j = 0; j <= 1; j++) {
-				//fieldを次の手に変化させる
-				score = minimax(field, depth - 1);
-				if (score < min) min = score;
-				//fieldを元に戻す
+				for (int k = -1; k <= 1; k++) {
+					for (int l = -1; l <= 1; l++) {
+						if (field.own_a1.x + i < 0 || field.own_a1.x + i > field.width)	//領域突破した場合は、とばす
+							continue;
+						if (field.own_a1.y + j < 0 || field.own_a1.y + j > field.height)
+							continue;
+						if (field.own_a2.x + i < 0 || field.own_a2.x + i > field.width)
+							continue;
+						if (field.own_a2.y + j < 0 || field.own_a2.y + j > field.height)
+							continue;
+
+						//fieldを次の手に変化させる
+						field.own_a1.x += i;
+						field.own_a1.y += j;
+						tmp1 = field.state[field.own_a1.x + i][field.own_a1.x + j];
+						field.state[field.own_a1.x + i][field.own_a1.x + j] = 1;
+
+						field.own_a2.x += k;
+						field.own_a2.y += l;
+						tmp2 = field.state[field.own_a2.x + k][field.own_a2.x + l];
+						field.state[field.own_a2.x + k][field.own_a2.x + l] = 1;
+
+						score = minimax(field, depth - 1);
+						if (score < min) min = score;
+						//debug
+						field::view(field);
+						//debug/
+
+						//fieldを元に戻す
+						field.own_a1.x -= i;
+						field.own_a1.y -= j;
+						field.state[field.own_a1.x + i][field.own_a1.x + j] = tmp1;
+
+						field.own_a2.x -= k;
+						field.own_a2.y -= l;
+						field.state[field.own_a2.x + k][field.own_a2.x + l] = tmp2;
+					}
+				}
 			}
 		}
 		return min;
@@ -104,9 +173,9 @@ int value(const struct board_template & field)
 		}
 	}
 
-	//左上から、全マスを起点に調査
-	for (int i = 0; i < field.width; i++) {
-		for (int j = 0; j < field.height; j++) {
+	//左上から、全マスを起点に囲まれているか調査
+	for (int i = 1; i < field.width-1; i++) {
+		for (int j = 1; j < field.height-1; j++) {
 			//if (inclose[i][j] > 0) continue;	//すでに囲われるとわかっているのなら、とばす <= 重複を考えると、保留
 			//inclose[i][j] = inclose_check(field, i, j, 1, tmp);	//囲いが重複しているのを考慮しないといけない！！！<=後で対応
 			tmp_num1 = inclose_check(field, i, j, 1, tmp);
@@ -169,14 +238,17 @@ int value(const struct board_template & field)
 //自陣か敵陣のどちらが囲っているのか、区別をつける
 //* 壁の存在はstateを見て、実際に囲う印をつけるのは、tmpのほう
 //* 壁は、自陣と敵陣の2通りで計算 = > 時間は大丈夫かな...？わからん。
-int inclose_check(const struct board_template & field, int x, int y, int team, std::vector<std::vector<int>> & tmp)
+int inclose_check(const struct board_template & field, int x, int y, int team,std::vector<std::vector<int>> & tmp)
 {
-	//領域を突破したら、囲えないことが確定
-	//もともとの配列で、外側を何かの数字で囲んでもいいかも
-	if (x < 0 || x > field.width || y < 0 || y > field.height)
+	//フィールドの端にいる時点で、囲えない
+	if (x == 0 || x == field.width - 1 || y == 0 || y == field.height - 1)
 		return 0;
 
+	if (field.state[x][y] == team)	//探索済み
+		return 1;
+
 	int another_team;	//teamの反対
+	int val;
 
 	if (team == 1)
 		another_team = 2;
@@ -185,14 +257,22 @@ int inclose_check(const struct board_template & field, int x, int y, int team, s
 
 	tmp[x][y] = team;
 
-	if(field.state[x-1][y] == 0 || field.state[x - 1][y] == another_team)
-		inclose_check(field, x - 1, y, team, tmp);
-	if (field.state[x + 1][y] == 0 || field.state[x + 1][y] == another_team)
-		inclose_check(field, x + 1, y, team, tmp);
-	if (field.state[x][y-1] == 0 || field.state[x][y - 1] == another_team)
-		inclose_check(field, x, y - 1, team, tmp);
-	if (field.state[x][y+1] == 0 || field.state[x][y + 1] == another_team)
-		inclose_check(field, x, y + 1, team, tmp);
-
+	if (field.state[x - 1][y] == 0 || field.state[x - 1][y] == another_team) {
+		val = inclose_check(field, x - 1, y, team, tmp);
+		if (val == 0) return 0;	//囲えないとわかったら、上流まで0を返していく
+	}
+	if (field.state[x + 1][y] == 0 || field.state[x + 1][y] == another_team) {
+		val = inclose_check(field, x + 1, y, team, tmp);
+		if (val == 0) return 0;
+	}
+	if (field.state[x][y - 1] == 0 || field.state[x][y - 1] == another_team) {
+		val = inclose_check(field, x, y - 1, team, tmp);
+		if (val == 0) return 0;
+	}
+	if (field.state[x][y + 1] == 0 || field.state[x][y + 1] == another_team) {
+		val = inclose_check(field, x, y + 1, team, tmp);
+		if (val == 0) return 0;
+	}
+		
 	return 1;
 }

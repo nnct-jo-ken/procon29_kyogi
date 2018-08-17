@@ -25,5 +25,5 @@ public:
 	//フィールド情報の初期化
 	void init_field(struct board_template & field);
 	//フィールド情報の表示
-	void view(struct board_template & field);
+	static void view(struct board_template & field);
 };
