@@ -1,13 +1,43 @@
 #include "search.h"
 #include <vector>
 
-struct nextmoves minimax(struct board_template & field, int depth)
+int minimax(struct board_template & field, int depth)
 {
-	nextmoves next = { 0,0,0,0,0,0 };
+	int score = 0;
 
-	return next;
+	if (depth == 0) return value(field);	//末端まで達したら、そのボードの評価値を返す
+
+	if (depth % 2 == 0)	//自陣
+	{
+		int max = -1000;	//とりあえず小さな値にする
+
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				//fieldを次の手に変化させる
+				score = minimax(field, depth - 1);
+				if (score > max) max = score;
+				//fieldを元に戻す
+			}
+		}
+		return max;
+	}
+	else	//敵陣
+	{		
+		int min = 1000;	//とりあえず大きい値にする
+
+		for (int i = 0; i <= 1; i++) {
+			for (int j = 0; j <= 1; j++) {
+				//fieldを次の手に変化させる
+				score = minimax(field, depth - 1);
+				if (score < min) min = score;
+				//fieldを元に戻す
+			}
+		}
+		return min;
+	}
 }
 
+/*
 std::vector<int> search(struct board_template field)
 {
 	std::vector<int> values;
@@ -45,6 +75,7 @@ std::vector<int> search(struct board_template field)
 
 	return values;
 }
+*/
 
 ///<summary>
 ///上下左右に自陣のマスがあるか探索

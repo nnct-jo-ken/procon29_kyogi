@@ -15,13 +15,15 @@ struct nextmoves {
 ///MiniMax法
 ///</summary>
 ///<params  name="depth">探索深さ</params>
-struct nextmoves minimax(struct board_template & field, int depth);
+int minimax(struct board_template & field, int depth);
 
+/*
 ///<summary>
 ///盤面を入力すると、各手の評価値を構造体配列で返す
 ///field情報をいじくり回すので、実体で受け取り
 ///</summary>
 std::vector<int> search(struct board_template field);
+*/
 
 ///<summary>
 ///盤面の評価値生成
