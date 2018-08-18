@@ -165,9 +165,11 @@ int value(const struct board_template & field)
 			*/
 		}
 	}
-
-	/*
+	
+	//*** debug begin ***
+	//評価値を求めるためにフィールドを書き換えているから、実際の状況とは違う
 	putchar('\n');
+	printf("inclose\n");
 	for (int i = 0; i < field.width; i++) {
 		for (int j = 0; j < field.height; j++) {
 			printf("%3d", inclose[i][j]);
@@ -175,7 +177,17 @@ int value(const struct board_template & field)
 		putchar('\n');
 	}
 	putchar('\n');
-	*/
+
+	putchar('\n');
+	printf("state\n");
+	for (int i = 0; i < field.width; i++) {
+		for (int j = 0; j < field.height; j++) {
+			printf("%3d", field.state[i][j]);
+		}
+		putchar('\n');
+	}
+	putchar('\n');
+	//*** debug end ***
 
 	/*
 	領域ポイントとタイルポイントの合算
@@ -187,8 +199,8 @@ int value(const struct board_template & field)
 			else if (field.state[i][j] == 2)//敵陣
 				value -= field.value[i][j];
 
-			if (inclose[i][j] == 1)			//囲まれている
-				value += field.value[i][j];
+			//if (inclose[i][j] == 1)			//囲まれている
+			//	value += field.value[i][j];
 
 			//***敵陣の囲いについては考慮していない***
 		}
