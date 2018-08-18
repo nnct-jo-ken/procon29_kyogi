@@ -16,40 +16,37 @@ int minimax(struct board_template & field, int depth)
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
 					for (int l = -1; l <= 1; l++) {
-						if (field.own_a1.x + i < 0 || field.own_a1.x + i > field.width)	//領域突破した場合は、とばす
+						if (field.own_a1.x + i < 1 || field.own_a1.x + i > field.width)	//領域突破した場合は、とばす
 							continue;
-						if (field.own_a1.y + j < 0 || field.own_a1.y + j > field.height)
+						if (field.own_a1.y + j < 1 || field.own_a1.y + j > field.height)
 							continue;
-						if (field.own_a2.x + i < 0 || field.own_a2.x + i > field.width)
+						if (field.own_a2.x + k < 1 || field.own_a2.x + k > field.width)
 							continue;
-						if (field.own_a2.y + j < 0 || field.own_a2.y + j > field.height)
+						if (field.own_a2.y + l < 1 || field.own_a2.y + l > field.height)
 							continue;
 
 						//fieldを次の手に変化させる
 						field.own_a1.x += i;
 						field.own_a1.y += j;
-						tmp1 = field.state[field.own_a1.x + i][field.own_a1.x + j];
-						field.state[field.own_a1.x + i][field.own_a1.x + j] = 1;
+						tmp1 = field.state[field.own_a1.x -1][field.own_a1.y -1];
+						field.state[field.own_a1.x -1][field.own_a1.y -1] = 1;
 
 						field.own_a2.x += k;
 						field.own_a2.y += l;
-						tmp2 = field.state[field.own_a2.x + k][field.own_a2.x + l];
-						field.state[field.own_a2.x + k][field.own_a2.x + l] = 1;
+						tmp2 = field.state[field.own_a2.x -1][field.own_a2.y -1];
+						field.state[field.own_a2.x -1][field.own_a2.y -1] = 1;
 
 						score = minimax(field, depth - 1);
 						if (score > max) max = score;
-						//debug
-						field::view(field);
-						//debug/
 
 						//fieldを元に戻す
 						field.own_a1.x -= i;
 						field.own_a1.y -= j;
-						field.state[field.own_a1.x + i][field.own_a1.x + j] = tmp1;
+						field.state[field.own_a1.x -1][field.own_a1.y -1] = tmp1;
 
 						field.own_a2.x -= k;
 						field.own_a2.y -= l;
-						field.state[field.own_a2.x + k][field.own_a2.x + l] = tmp2;
+						field.state[field.own_a2.x -1][field.own_a2.y -1] = tmp2;
 					}
 				}
 			}
@@ -60,44 +57,41 @@ int minimax(struct board_template & field, int depth)
 	{		
 		int min = 1000;	//とりあえず大きい値にする
 
-		for (int i = 0; i <= 1; i++) {
-			for (int j = 0; j <= 1; j++) {
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
 					for (int l = -1; l <= 1; l++) {
-						if (field.own_a1.x + i < 0 || field.own_a1.x + i > field.width)	//領域突破した場合は、とばす
+						if (field.own_a1.x + i < 1 || field.own_a1.x + i > field.width)	//領域突破した場合は、とばす
 							continue;
-						if (field.own_a1.y + j < 0 || field.own_a1.y + j > field.height)
+						if (field.own_a1.y + j < 1 || field.own_a1.y + j > field.height)
 							continue;
-						if (field.own_a2.x + i < 0 || field.own_a2.x + i > field.width)
+						if (field.own_a2.x + k < 1 || field.own_a2.x + k > field.width)
 							continue;
-						if (field.own_a2.y + j < 0 || field.own_a2.y + j > field.height)
+						if (field.own_a2.y + l < 1 || field.own_a2.y + l > field.height)
 							continue;
 
 						//fieldを次の手に変化させる
 						field.own_a1.x += i;
 						field.own_a1.y += j;
-						tmp1 = field.state[field.own_a1.x + i][field.own_a1.x + j];
-						field.state[field.own_a1.x + i][field.own_a1.x + j] = 1;
+						tmp1 = field.state[field.own_a1.x -1][field.own_a1.y -1];
+						field.state[field.own_a1.x -1][field.own_a1.y -1] = 1;
 
 						field.own_a2.x += k;
 						field.own_a2.y += l;
-						tmp2 = field.state[field.own_a2.x + k][field.own_a2.x + l];
-						field.state[field.own_a2.x + k][field.own_a2.x + l] = 1;
+						tmp2 = field.state[field.own_a2.x -1][field.own_a2.y -1];
+						field.state[field.own_a2.x -1][field.own_a2.y -1] = 1;
 
 						score = minimax(field, depth - 1);
 						if (score < min) min = score;
-						//debug
-						field::view(field);
-						//debug/
 
 						//fieldを元に戻す
 						field.own_a1.x -= i;
 						field.own_a1.y -= j;
-						field.state[field.own_a1.x + i][field.own_a1.x + j] = tmp1;
+						field.state[field.own_a1.x -1][field.own_a1.y -1] = tmp1;
 
 						field.own_a2.x -= k;
 						field.own_a2.y -= l;
-						field.state[field.own_a2.x + k][field.own_a2.x + l] = tmp2;
+						field.state[field.own_a2.x -1][field.own_a2.y -1] = tmp2;
 					}
 				}
 			}
@@ -174,8 +168,8 @@ int value(const struct board_template & field)
 	}
 
 	//左上から、全マスを起点に囲まれているか調査
-	for (int i = 1; i < field.width-1; i++) {
-		for (int j = 1; j < field.height-1; j++) {
+	for (int i = 0; i < field.width; i++) {
+		for (int j = 0; j < field.height; j++) {
 			//if (inclose[i][j] > 0) continue;	//すでに囲われるとわかっているのなら、とばす <= 重複を考えると、保留
 			//inclose[i][j] = inclose_check(field, i, j, 1, tmp);	//囲いが重複しているのを考慮しないといけない！！！<=後で対応
 			tmp_num1 = inclose_check(field, i, j, 1, tmp);
@@ -241,10 +235,10 @@ int value(const struct board_template & field)
 int inclose_check(const struct board_template & field, int x, int y, int team,std::vector<std::vector<int>> & tmp)
 {
 	//フィールドの端にいる時点で、囲えない
-	if (x == 0 || x == field.width - 1 || y == 0 || y == field.height - 1)
+	if (x < 1 || x > field.width-2 || y < 1 || y > field.height-2)
 		return 0;
 
-	if (field.state[x][y] == team)	//探索済み
+	if (tmp[x][y] == team)	//探索済み
 		return 1;
 
 	int another_team;	//teamの反対
