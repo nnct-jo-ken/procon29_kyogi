@@ -100,46 +100,6 @@ int minimax(struct board_template & field, int depth)
 	}
 }
 
-/*
-std::vector<int> search(struct board_template field)
-{
-	std::vector<int> values;
-	int val;
-
-	for (int i = -1; i <= 1; i++) {
-		for (int j = -1; j <= 1; j++) {
-			for (int k = -1; k <= 1; k++) {
-				for (int l = -1; l <= 1; l++) {
-					val = 0;
-
-					if (field.a1.x + i < 0 || field.a1.x + i > field.width)	//領域突破した場合は、とばす
-						continue;
-					if (field.a1.y + j < 0 || field.a1.y + j > field.height)	//領域突破した場合は、とばす
-						continue;
-					field.a1.x += i;
-					field.a1.y += j;
-					field.state[field.a1.x + i][field.a1.x + j] = 1;
-					val += value(field);
-
-					if (field.a2.x + k < 0 || field.a2.x + k > field.width)	//領域突破した場合は、とばす
-						continue;
-					if (field.a2.y + l < 0 || field.a2.y + l > field.height)	//領域突破した場合は、とばす
-						continue;
-					field.a2.x += k;
-					field.a2.y += l;
-					field.state[field.a2.x + k][field.a2.x + l] = 1;
-					val += value(field);
-
-					values.push_back(val);
-				}
-			}
-		}
-	}
-
-	return values;
-}
-*/
-
 ///<summary>
 ///上下左右に自陣のマスがあるか探索
 ///なければ、そのマスに移動して、再帰的に探索
@@ -205,6 +165,17 @@ int value(const struct board_template & field)
 			*/
 		}
 	}
+
+	/*
+	putchar('\n');
+	for (int i = 0; i < field.width; i++) {
+		for (int j = 0; j < field.height; j++) {
+			printf("%3d", inclose[i][j]);
+		}
+		putchar('\n');
+	}
+	putchar('\n');
+	*/
 
 	/*
 	領域ポイントとタイルポイントの合算
