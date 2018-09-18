@@ -7,7 +7,6 @@ int main() {
 
 	load("shape_info.txt", &field);
 	view(&field);
-	
 	system("pause");
 	return 0;
 }
