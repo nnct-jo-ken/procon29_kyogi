@@ -1,53 +1,59 @@
-��29�񍂐�v���R���@���Z����
+第29回高専プロコン　競技部門
 ====
 
+本リポジトリは、本番で使用したプログラムとはほとんど関係ありません。  
+以下のリポジトリが実際に使用したプログラムです。
+
+* [GUI](https://github.com/nnct-jo-ken/procon2018_kyogi_GUI)
+* [ソルバー](https://github.com/nnct-jo-ken/procon2018_kyogi_solver)
+
 ## Description
-[��W�v��](http://www.procon.gr.jp/wp-content/uploads//2016/12/266299c2bb26295c0ada037e8f235cb4.pdf "��29�񍂐�v���R���@��W�v��")
+[募集要項](http://www.procon.gr.jp/wp-content/uploads//2016/12/266299c2bb26295c0ada037e8f235cb4.pdf "第29回高専プロコン　募集要項")
 
 ## Investment policy
 
-### �u�����`�̖���
-�uGit flow�v�̂悤�ȃu�����`�̊Ǘ������܂��B
+### ブランチの役割
+「Git flow」のようなブランチの管理をします。
 
 * master
-	- ���C���u�����`
-	- ����ł̂�
+	- メインブランチ
+	- 安定版のみ
 * develop
-	- �J���u�����`
-* feature/{�@�\��}
-	- �@�\�̒ǉ�
-	- develop���番�򂵁Adevelop�Ƀ}�[�W
+	- 開発ブランチ
+* feature/{機能名}
+	- 機能の追加
+	- developから分岐し、developにマージ
 * hotfix
-	- master���番�򂵁Amaster��develop�Ƀ}�[�W
+	- masterから分岐し、masterとdevelopにマージ
 
-### �R�~�b�g
-#### �R�~�b�g���b�Z�[�W
-���{��ł��ł��B�킩��₷�����b�Z�[�W�����Ă��������B
+### コミット
+#### コミットメッセージ
+日本語でも可です。わかりやすいメッセージをつけてください。
 
-#### �^�C�~���O
-�@�\�̒ǉ���C���A�폜�ȂǁA�ׂ����P�ʂŃR�~�b�g���Ă��������B
+#### タイミング
+機能の追加や修正、削除など、細かい単位でコミットしてください。
 
-### �R�[�h��ύX����ꍇ
-���l�̃R�[�h�Ƌ������N�����ꍇ�́A���̐l�Ƙb�������܂��B
-�S�̂ɉe�����邱�Ƃł���΁A�S�̂ɘA�����܂��B
+### コードを変更する場合
+他人のコードと競合が起きた場合は、その人と話し合います。
+全体に影響することであれば、全体に連絡します。
 
-### �V�����@�\���J�����n�߂�Ƃ�
+### 新しい機能を開発し始めるとき
 ```
 git pull origin 
 git checkout develop
-git checkout -b feature/{�@�\��}
+git checkout -b feature/{機能名}
 ```
 
-### �@�\�J�����I����Ƃ�
-'feature/{�@�\��}'�u�����`�ɂĊJ�����I�����鎞�́A�ȉ��̂悤�ɂ��Ă��������B
+### 機能開発を終えるとき
+'feature/{機能名}'ブランチにて開発を終了する時は、以下のようにしてください。
 
 ```
 git commit -m 'commit message'
 git push origin
 ```
 
-push��ɁAPull Request�𔭍s���ă}�[�W�̐\�������Ă��������B
-��肪�Ȃ���΁A�}�[�W����܂��B
+push後に、Pull Requestを発行してマージの申請をしてください。
+問題がなければ、マージされます。
 
-### issue�̎g����
-��������@�\�A�o�O�Ȃǂɂ��āA��̓I�ȃ��m��issue�Ƃ��č쐬���Ă��������B
+### issueの使い方
+実装する機能、バグなどについて、具体的なモノをissueとして作成してください。
